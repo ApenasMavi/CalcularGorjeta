@@ -22,11 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.calculargorjeta.ui.theme.CalcularGorjetaTheme
+import java.text.NumberFormat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +47,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview (showSystemUi = true)
+@Preview(showSystemUi = true)
 @Composable
-fun CalcularGorjeta () {
-    var TotalConta  by remember{ mutableStateOf("") }
+fun CalcularGorjeta() {
+    var totalConta by remember { mutableStateOf("") }
+    val valorGorjeta = calcularGorjeta(totalConta.toDoubleOrNull() ?:0.0)
     Column(
 
         verticalArrangement = Arrangement.SpaceBetween,
@@ -60,8 +63,8 @@ fun CalcularGorjeta () {
             text = "Calcular Gorjeta"
         )
         TextField(
-            value = TotalConta ,
-            onValueChange = {TotalConta = it},
+            value = totalConta,
+            onValueChange = { totalConta = it },
             label = {
                 Text(
                     text = "Valor da Conta"
@@ -73,14 +76,19 @@ fun CalcularGorjeta () {
             )
         )
 
-        Spacer (
+        Spacer(
             modifier = Modifier.size(10.dp)
         )
         Text(
-            text = "Total da Gorjeta: R$ 0,00")
+            text = stringResource(R.string.valor_gorjeta, valorGorjeta)
+        )
     }
 
 }
 
+fun calcularGorjeta(totalConta:Double, porcentagemGorgeta:Double = 15.0):String {
+    val gorjeta = porcentagemGorgeta / 100 * totalConta
+    return NumberFormat.getCurrencyInstance().format(gorjeta)
+}
 
 
